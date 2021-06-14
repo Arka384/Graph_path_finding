@@ -1,0 +1,13 @@
+﻿  main.cpp
+c:\users\arkad\documents\deadshot files\c++ programs\sfml\tests\path_finding_with_graphs\path_finding_with_graphs\main.cpp(74): warning C4244: '=': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+c:\users\arkad\documents\deadshot files\c++ programs\sfml\tests\path_finding_with_graphs\path_finding_with_graphs\main.cpp(75): warning C4244: '=': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=int
+          ]
+c:\users\arkad\documents\deadshot files\c++ programs\sfml\tests\path_finding_with_graphs\path_finding_with_graphs\main.cpp(134): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Path_Finding_with_Graphs.vcxproj -> C:\Users\arkad\Documents\DEADSHOT FILES\C++ Programs\SFML\TESTS\Path_Finding_with_Graphs\Debug\Path_Finding_with_Graphs.exe
