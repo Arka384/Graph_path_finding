@@ -26,6 +26,7 @@ float mx, my;
 
 void init(void);
 void mouse_update(void);
+void create_adj_mat(void);
 void add_edge(int, int);
 void bfs(void);
 int get_path(void);
@@ -59,7 +60,10 @@ int main()
 				window.close();
 			case Event::KeyPressed:
 				if (Keyboard::isKeyPressed(Keyboard::Enter))
-					state = 1;
+					if (state == 0) {
+						create_adj_mat();
+						state = 1;
+					}
 				if (Keyboard::isKeyPressed(Keyboard::R))
 					init();
 				break;
@@ -74,8 +78,9 @@ int main()
 		my = Mouse::getPosition(window).y;
 
 		//states updating
-		if (state == 0)	//when drawing 
+		if (state == 0)
 			mouse_update();
+			
 		if (state == 1)
 		{
 			bfs();
@@ -137,22 +142,28 @@ void init(void)
 			count++;
 		}
 	}
+}
 
+void create_adj_mat()
+{
 	for (int i = 0; i < max; i++)
 	{
 		for (int j = 0; j < max; j++)
 		{
-			if (j + 1 < max)
-				add_edge(matrix[i][j].vertex, matrix[i][j + 1].vertex);
-			if (j - 1 > 0)
-				add_edge(matrix[i][j].vertex, matrix[i][j - 1].vertex);
-			if (i + 1 < max)
-				add_edge(matrix[i][j].vertex, matrix[i + 1][j].vertex);
-			if (i - 1 > 0)
-				add_edge(matrix[i][j].vertex, matrix[i - 1][j].vertex);
+			if (matrix[i][j].wall == 0)
+			{
+				if (j + 1 < max && matrix[i][j + 1].wall == 0)
+					add_edge(matrix[i][j].vertex, matrix[i][j + 1].vertex);
+				if (j - 1 > 0 && matrix[i][j - 1].wall == 0)
+					add_edge(matrix[i][j].vertex, matrix[i][j - 1].vertex);
+				if (i + 1 < max && matrix[i + 1][j].wall == 0)
+					add_edge(matrix[i][j].vertex, matrix[i + 1][j].vertex);
+				if (i - 1 > 0 && matrix[i - 1][j].wall == 0)
+					add_edge(matrix[i][j].vertex, matrix[i - 1][j].vertex);
+			}
+			
 		}
 	}
-
 }
 
 void add_edge(int a, int b)
@@ -229,6 +240,12 @@ void mouse_update()
 			{
 				des = matrix[i][j].vertex;
 				matrix[i][j].box.setFillColor(Color::Green);
+			}
+
+			if (hot && Mouse::isButtonPressed(Mouse::Button::Left))
+			{
+				matrix[i][j].wall = 1;
+				matrix[i][j].box.setFillColor(Color::Black);
 			}
 		}
 	}
