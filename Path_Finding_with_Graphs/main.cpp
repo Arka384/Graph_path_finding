@@ -29,6 +29,7 @@ void mouse_update(void);
 void create_adj_mat(void);
 void add_edge(int, int);
 void bfs(void);
+void dfs(void);
 int get_path(void);
 
 int main()
@@ -64,8 +65,10 @@ int main()
 						create_adj_mat();
 						state = 1;
 					}
-				if (Keyboard::isKeyPressed(Keyboard::R))
+				if (Keyboard::isKeyPressed(Keyboard::R)) {
 					init();
+					state = 0;
+				}
 				break;
 			default:
 				break;
@@ -83,7 +86,8 @@ int main()
 			
 		if (state == 1)
 		{
-			bfs();
+			//bfs();
+			dfs();
 			state = 2;
 		}
 		if (state == 2 && traverse.empty() == 1)
@@ -141,6 +145,14 @@ void init(void)
 			matrix[i][j].vertex = count;
 			count++;
 		}
+	}
+
+	for (int i = 0; i < vertex; i++)
+	{
+		path[i] = 0;
+		pred[i] = -1;
+		for (int j = 0; j < vertex; j++)
+			adj_matrix[i][j] = 0;
 	}
 }
 
@@ -206,6 +218,39 @@ void bfs()
 				pred[i] = x;
 			}
 		}
+	}
+}
+
+void dfs()
+{
+	int i;
+	std::list<int> stack;
+	bool visited[vertex] = { false };
+
+	stack.push_back(source);
+	visited[source] = true;
+	traverse.push_back(source);
+	pred[source] = -1;
+
+	while (stack.empty() != 1)
+	{
+		int x = stack.back();
+
+		for (i = 0; i < vertex; i++)
+		{
+			if (adj_matrix[x][i] == 1 && visited[i] == false)
+			{
+				stack.push_back(i);
+				pred[i] = x;
+				traverse.push_back(stack.back());
+				visited[i] = true;
+				if (i == des)
+					return;
+				break;
+			}
+		}
+		if (i == vertex)
+			stack.pop_back();
 	}
 }
 
