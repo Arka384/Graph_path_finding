@@ -23,6 +23,10 @@ int source = 0, des = 0;
 Clock cl;
 Time dt;
 float mx, my;
+Sprite info_img;
+Texture info_tex;
+RectangleShape b1, b2;
+int algo_select = 0;
 
 void init(void);
 void mouse_update(void);
@@ -31,10 +35,11 @@ void add_edge(int, int);
 void bfs(void);
 void dfs(void);
 int get_path(void);
+void info(void);
 
 int main()
 {
-	RenderWindow window(VideoMode(window_dimensions, window_dimensions), "Maze Solver", Style::Close);
+	RenderWindow window(VideoMode(window_dimensions + 300, window_dimensions), "Maze Solver", Style::Close);
 	float t = 0;
 	int state = 0;
 	init();
@@ -80,14 +85,18 @@ int main()
 		mx = Mouse::getPosition(window).x;
 		my = Mouse::getPosition(window).y;
 
+		info();
+
 		//states updating
 		if (state == 0)
 			mouse_update();
 			
 		if (state == 1)
 		{
-			//bfs();
-			dfs();
+			if(algo_select == 0)
+				bfs();
+			else if(algo_select == 1)
+				dfs();
 			state = 2;
 		}
 		if (state == 2 && traverse.empty() == 1)
@@ -119,6 +128,9 @@ int main()
 
 		window.clear();
 
+		window.draw(info_img);
+		window.draw(b1);
+		window.draw(b2);
 		for (int i = 0; i < max; i++)
 			for (int j = 0; j < max; j++)
 				window.draw(matrix[i][j].box);
@@ -154,6 +166,21 @@ void init(void)
 		for (int j = 0; j < vertex; j++)
 			adj_matrix[i][j] = 0;
 	}
+
+	info_tex.loadFromFile("info.png");
+	info_img.setTexture(info_tex);
+	info_img.setPosition(window_dimensions, 40);
+
+	b1.setSize(Vector2f(12, 12));
+	b1.setOutlineThickness(2.f);
+	b1.setOutlineColor(Color(92, 92, 92, 255));
+	b1.setPosition(window_dimensions + 82, 40 + 215);
+	b1.setFillColor(Color::Red);
+	b2.setSize(Vector2f(12, 12));
+	b2.setOutlineThickness(2.f);
+	b2.setFillColor(Color::Black);
+	b2.setOutlineColor(Color(92, 92, 92, 255));
+	b2.setPosition(window_dimensions + 82, 40 + 243);
 }
 
 void create_adj_mat()
@@ -266,7 +293,6 @@ int get_path()
 	return k;
 }
 
-
 void mouse_update()
 {
 	for (int i = 0; i < max; i++)
@@ -292,7 +318,34 @@ void mouse_update()
 				matrix[i][j].wall = 1;
 				matrix[i][j].box.setFillColor(Color::Black);
 			}
+
+			if (hot && Mouse::isButtonPressed(Mouse::Button::Right))
+			{
+				matrix[i][j].wall = 0;
+				matrix[i][j].box.setFillColor(Color(92, 92, 92, 255));
+			}
 		}
+	}
+
+}
+
+void info(void)
+{
+	//for select buttons
+	int h1 = mx > b1.getPosition().x && mx < b1.getPosition().x + b1.getGlobalBounds().width
+		&& my > b1.getPosition().y && my < b1.getPosition().y + b1.getGlobalBounds().height;
+	int h2 = mx > b2.getPosition().x && mx < b2.getPosition().x + b2.getGlobalBounds().width
+		&& my > b2.getPosition().y && my < b2.getPosition().y + b2.getGlobalBounds().height;
+
+	if (h1 && Mouse::isButtonPressed(Mouse::Button::Left)) {
+		algo_select = 0;
+		b1.setFillColor(Color::Red);
+		b2.setFillColor(Color::Black);
+	}
+	if (h2 && Mouse::isButtonPressed(Mouse::Button::Left)) {
+		algo_select = 1;
+		b2.setFillColor(Color::Red);
+		b1.setFillColor(Color::Black);
 	}
 
 }
